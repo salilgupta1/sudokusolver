@@ -259,7 +259,7 @@ def main():
 	print '\n Completed:'
 
 	t0 = time.time()
-	x = backTrackingWithMRVandMCVandLCV(sb,cb,0)
+	x = backTrackingWithMRVandMCV(sb,cb,0)
 	t1 = time.time()-t0
 	print t1
 
