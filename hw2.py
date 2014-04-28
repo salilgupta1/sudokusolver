@@ -45,17 +45,6 @@ class ConstraintBoard():
 							#self.changes.append(((x,y),copy.copy(self.Constraints[x][y].legalVals)))
 							self.Constraints[x][y].legalVals.remove(val)
 		return ConstraintBoard(self.BoardSize,self.Constraints)
-	'''
-	def undo(self,row,col,val):
-		self.Constraints[row][col].isAssigned=False
-		self.Constraints[row][col].legalVals.append(val)
-
-		for v in self.changes:
-			row = v[0][0]
-			col = v[0][1]
-			self.Constraints[row][col].legalVals = v[1]
-		return ConstraintBoard(self.BoardSize,self.Constraints)
-	'''
 ##########
 ##########
 #CSP Related Functions
@@ -126,34 +115,36 @@ def getEmptySquareMRVAndMCV(cb):
 	return (optRow,optCol)
 
 def leastConstrainingValue(row,col,cb):
-	legalVals = cb.Constraints[row][col].legalVals
-	size = cb.BoardSize
+	lVals = cb.Constraints[row][col].legalVals
+	size=cb.BoardSize
 	subsquare = int(math.sqrt(size))
-	lcv = 0
-	minLCV = float("inf")
-	for val in legalVals:
-		tempLCV=0
-		for i in range(size):
-			if i!=col:
-				if cb.Constraints[row][i].isAssigned==False and  val in cb.Constraints[row][i].legalVals:
+	lcvDict = {}
+
+	for val in lVals:
+		lcvDict[constrainScore(row,col,val,cb,size)] = val
+	return lcvDict
+
+def constrainScore(row,col,val,cb,size):
+	tempLCV=0
+	subsquare = int(math.sqrt(size))
+	for i in range(size):
+		if i!=col:
+			if cb.Constraints[row][i].isAssigned==False and  val in cb.Constraints[row][i].legalVals:
+				tempLCV+=len(cb.Constraints[row][i].legalVals)-1
+	for j in range(size):
+		if j !=row:
+			if cb.Constraints[j][col].isAssigned==False and  val in cb.Constraints[j][col].legalVals:
+				tempLCV+=len(cb.Constraints[j][col].legalVals)-1
+	squareRow = row // subsquare
+	squareCol = col // subsquare
+	for i in range(subsquare):
+		for j in range(subsquare):
+			x = squareRow*subsquare+i
+			y = squareCol*subsquare+j
+			if x!= row and y!=col:
+				if cb.Constraints[x][y].isAssigned==False and val in cb.Constraints[x][y].legalVals:
 					tempLCV+=len(cb.Constraints[row][i].legalVals)-1
-		for j in range(size):
-			if j!=row:
-				if cb.Constraints[j][col].isAssigned==False and  val in cb.Constraints[j][col].legalVals:
-					tempLCV+=len(cb.Constraints[row][i].legalVals)-1
-		squareRow = row // subsquare
-		squareCol = col // subsquare
-		for i in range(subsquare):
-			for j in range(subsquare):
-				x = squareRow*subsquare+i
-				y = squareCol*subsquare+j
-				if x!= row and y!=col:
-					if cb.Constraints[x][y].isAssigned==False and val in cb.Constraints[x][y].legalVals:
-						tempLCV+=len(cb.Constraints[row][i].legalVals)-1
-		if tempLCV<minLCV:
-			lcv=val
-			minLCV=tempLCV
-	return lcv
+	return tempLCV
 
 ############
 ##########
@@ -166,19 +157,17 @@ def backTrackingWithMRVandMCVandLCV(Sudokuboard,SudokuConstraintBoard,variable_a
 		return True
 	else:
 		(row,col) = getEmptySquareMRVAndMCV(SudokuConstraintBoard)
-		print row, col
 		legalVals = SudokuConstraintBoard.Constraints[row][col].legalVals
-		print legalVals
-		lcv = leastConstrainingValue(row,col,SudokuConstraintBoard)
-		print lcv
-		variable_assign +=1
-		Sudokuboard = Sudokuboard.set_value(row,col,lcv)
-		myCopyOfCBoard = copy.deepcopy(SudokuConstraintBoard)
-		myCopyOfCBoard = myCopyOfCBoard.updateConstraints(row,col,lcv)
-		if forwardCheck(myCopyOfCBoard)==True:
-			if backTrackingWithMRVandMCVandLCV(Sudokuboard,myCopyOfCBoard,variable_assign)==True:
-				return True
-		Sudokuboard = Sudokuboard.set_value(row,col,0)
+		lcvDict = leastConstrainingValue(row,col,SudokuConstraintBoard)
+		for i in sorted(lcvDict.iterkeys(),reverse=True):
+			variable_assign +=1
+			Sudokuboard = Sudokuboard.set_value(row,col,lcvDict[i])
+			myCopyOfCBoard = copy.deepcopy(SudokuConstraintBoard)
+			myCopyOfCBoard = myCopyOfCBoard.updateConstraints(row,col,lcvDict[i])
+			if forwardCheck(myCopyOfCBoard)==True:
+				if backTrackingWithMRVandMCVandLCV(Sudokuboard,myCopyOfCBoard,variable_assign)==True:
+					return True
+			Sudokuboard = Sudokuboard.set_value(row,col,0)
 	return False	
 
 def backTrackingWithMRVandMCV(Sudokuboard,SudokuConstraintBoard,variable_assign):
@@ -242,10 +231,10 @@ def simpleBackTracking(Sudokuboard,SudokuConstraintBoard,variable_assign):
 
 def main():
 	#initialize environment
-	file_name= '9by9Test.txt'
+	file_name= '16by16Test.txt'
 	sb = init_board(file_name)
 	size = sb.BoardSize
-	constraints = [[Constraint([1,2,3,4,5,6,7,8,9],False) for i in range(size)] for x in range(size)]
+	constraints = [[Constraint([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],False) for i in range(size)] for x in range(size)]
 	cb = ConstraintBoard(size,constraints)
 	for i in range(size):
 		for j in range(size):
@@ -259,7 +248,7 @@ def main():
 	print '\n Completed:'
 
 	t0 = time.time()
-	x = backTrackingWithMRVandMCV(sb,cb,0)
+	x = backTrackingWithMRVandMCVandLCV(sb,cb,0)
 	t1 = time.time()-t0
 	print t1
 
