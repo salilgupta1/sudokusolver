@@ -154,7 +154,6 @@ def backTrackingWithMRVandMCVandLCV(Sudokuboard,SudokuConstraintBoard,variable_a
 		return True
 	else:
 		(row,col) = getEmptySquareMRVAndMCV(SudokuConstraintBoard)
-		legalVals = SudokuConstraintBoard.Constraints[row][col].legalVals
 		lcvDict = leastConstrainingValue(row,col,SudokuConstraintBoard)
 		sortedKeys = sorted(lcvDict.iterkeys(),reverse=True)
 		for i in sortedKeys:
@@ -168,7 +167,7 @@ def backTrackingWithMRVandMCVandLCV(Sudokuboard,SudokuConstraintBoard,variable_a
 					variable_assign):
 					return True
 			Sudokuboard = Sudokuboard.set_value(row,col,0)
-	return False	
+	return False
 
 def backTrackingWithMRVandMCV(Sudokuboard,SudokuConstraintBoard,variable_assign):
 	if iscomplete(Sudokuboard.CurrentGameboard):
@@ -234,10 +233,11 @@ def simpleBackTracking(Sudokuboard,SudokuConstraintBoard,variable_assign):
 				return True
 			Sudokuboard = Sudokuboard.set_value(row,col,0)
 	return False
-'''
+
+"""
 def main():
 	#initialize environment
-	file_name= '9by9Test.txt'
+	file_name= 'testFiles/9x9.20.txt'
 	sb = init_board(file_name)
 	size = sb.BoardSize
 	constraints = [[Constraint([1,2,3,4,5,6,7,8,9],False) for i in range(size)] for x in range(size)]
@@ -254,10 +254,12 @@ def main():
 	print '\n Completed:'
 
 	t0 = time.time()
-	x = simpleBackTracking(sb,cb,0)
+	x = backTrackingWithMRVandMCVandLCV(sb,cb,0)
 	t1 = time.time()-t0
 	print t1
-'''
+
+main()
+"""
 
 def test():
 	path = os.getcwd()+"/testFiles"
@@ -300,6 +302,3 @@ def test():
 		print t1
 
 test()
-
-#forward checking if any of the legalValues becomes null and isn't assigned a value then we have a problem
-# so that is when it should skip testing for backtracking
