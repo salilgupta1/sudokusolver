@@ -1,5 +1,5 @@
 from sudoku import *
-import math,random,copy,time
+import math,random,copy,time,os
 
 ####Helper classes
 class Constraint():
@@ -228,7 +228,7 @@ def simpleBackTracking(Sudokuboard,SudokuConstraintBoard,variable_assign):
 				return True
 			Sudokuboard = Sudokuboard.set_value(row,col,0)
 	return False
-
+'''
 def main():
 	#initialize environment
 	file_name= '9by9Test.txt'
@@ -251,40 +251,45 @@ def main():
 	x = simpleBackTracking(sb,cb,0)
 	t1 = time.time()-t0
 	print t1
+'''
+def test():
+	path = os.getcwd()+"/testFiles"
+	files = []
+	for root,dirs,files in os.walk(path):
+		pass
+	for f in files:
+		file_name = os.path.join("testFiles/",f)
+		sb = init_board(file_name)
+		size = sb.BoardSize
+		domain = []
+		if size == 4:
+			constraints = [[Constraint([1,2,3,4],False) for i in range(size)] for x in range(size)]
+		elif size == 9:
+			constraints = [[Constraint([1,2,3,4,5,6,7,8,9],False) for i in range(size)] for x in range(size)]
+		elif size ==16:
+			constraints = [[Constraint([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],False) for i in range(size)] for x in range(size)] 
+		else:
+			constraints = [[Constraint([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25],False) for i in range(size)] for x in range(size)] 
 
-main()
+
+		cb = ConstraintBoard(size,constraints)
+		for i in range(size):
+			for j in range(size):
+				if sb.CurrentGameboard[i][j]!=0:
+					cb = cb.updateConstraints(i,j,sb.CurrentGameboard[i][j])
+
+		print 'Initial:'
+		for i in range(size):
+			print sb.CurrentGameboard[i]
+
+		print '\n Completed:'
+
+		t0 = time.time()
+		x = backTrackingWithMRVandMCVandLCV(sb,cb,0)
+		t1 = time.time()-t0
+		print t1
+
+test()
 
 #forward checking if any of the legalValues becomes null and isn't assigned a value then we have a problem
 # so that is when it should skip testing for backtracking
-'''
-def test(Sudokuboard,SudokuConstraintBoard):
-
-	print "Initial State"
-	for z in range(9):
-		print Sudokuboard.CurrentGameboard[z]
-	print "\n"
-	for x in range(9):
-		print SudokuConstraintBoard.Constraints[0][x].legalVals
-	for y in range(9):
-		print SudokuConstraintBoard.Constraints[y][0].legalVals
-	print "\n"
-	print "Changed State"
-	SudokuConstraintBoard = SudokuConstraintBoard.updateConstraints(0,1,1)
-	for x in range(9):
-		print SudokuConstraintBoard.Constraints[0][x].legalVals
-	for y in range(9):
-		print SudokuConstraintBoard.Constraints[y][0].legalVals
-	print "\n"
-
-	print "Changes made"
-	for x in SudokuConstraintBoard.changes:
-		print x
-
-	print "\n"
-	print "Back to Initial State"
-	SudokuConstraintBoard= SudokuConstraintBoard.undo(0,1,1)
-	for x in range(9):
-		print SudokuConstraintBoard.Constraints[0][x].legalVals
-	for y in range(9):
-		print SudokuConstraintBoard.Constraints[y][0].legalVals
-'''
