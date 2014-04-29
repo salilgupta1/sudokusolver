@@ -144,7 +144,7 @@ def constrainScore(row,col,val,cb,size):
 	return score
 
 ############
-##########
+############
 #Different Backtracking functions
 def backTrackingWithMRVandMCVandLCV(Sudokuboard,SudokuConstraintBoard,variable_assign):
 	if iscomplete(Sudokuboard.CurrentGameboard):
@@ -162,8 +162,8 @@ def backTrackingWithMRVandMCVandLCV(Sudokuboard,SudokuConstraintBoard,variable_a
 			Sudokuboard = Sudokuboard.set_value(row,col,lcvDict[i])
 			myCopyOfCBoard = copy.deepcopy(SudokuConstraintBoard)
 			myCopyOfCBoard = myCopyOfCBoard.updateConstraints(row,col,lcvDict[i])
-			if forwardCheck(myCopyOfCBoard)==True:
-				if backTrackingWithMRVandMCVandLCV(Sudokuboard,myCopyOfCBoard,variable_assign)==True:
+			if forwardCheck(myCopyOfCBoard):
+				if backTrackingWithMRVandMCVandLCV(Sudokuboard,myCopyOfCBoard,variable_assign):
 					return True
 			Sudokuboard = Sudokuboard.set_value(row,col,0)
 	return False	
@@ -175,15 +175,15 @@ def backTrackingWithMRVandMCV(Sudokuboard,SudokuConstraintBoard,variable_assign)
 		print variable_assign
 		return True
 	else:
-		(row,col) = getEmptySquareMRVAndMCV(SudokuConstraintBoard)### here
+		(row,col) = getEmptySquareMRVAndMCV(SudokuConstraintBoard)
 		legalVals = SudokuConstraintBoard.Constraints[row][col].legalVals
 		for v in legalVals:
 			variable_assign +=1
 			Sudokuboard = Sudokuboard.set_value(row,col,v)
 			myCopyOfCBoard = copy.deepcopy(SudokuConstraintBoard)
 			myCopyOfCBoard = myCopyOfCBoard.updateConstraints(row,col,v)
-			if forwardCheck(myCopyOfCBoard)==True:
-				if backTrackingWithMRVandMCV(Sudokuboard,myCopyOfCBoard,variable_assign)==True:
+			if forwardCheck(myCopyOfCBoard):
+				if backTrackingWithMRVandMCV(Sudokuboard,myCopyOfCBoard,variable_assign):
 					return True
 			Sudokuboard = Sudokuboard.set_value(row,col,0)
 	return False
@@ -202,8 +202,8 @@ def backTrackingWithFC(Sudokuboard,SudokuConstraintBoard,variable_assign):
 			Sudokuboard = Sudokuboard.set_value(row,col,v)
 			myCopyOfCBoard = copy.deepcopy(SudokuConstraintBoard)
 			myCopyOfCBoard = myCopyOfCBoard.updateConstraints(row,col,v)
-			if forwardCheck(myCopyOfCBoard)==True:						###HERE
-				if backTrackingWithFC(Sudokuboard,myCopyOfCBoard,variable_assign)==True:
+			if forwardCheck(myCopyOfCBoard):
+				if backTrackingWithFC(Sudokuboard,myCopyOfCBoard,variable_assign):
 					return True
 			Sudokuboard = Sudokuboard.set_value(row,col,0)
 	return False
@@ -222,7 +222,9 @@ def simpleBackTracking(Sudokuboard,SudokuConstraintBoard,variable_assign):
 			Sudokuboard = Sudokuboard.set_value(row,col,v)
 			myCopyOfCBoard = copy.deepcopy(SudokuConstraintBoard)
 			myCopyOfCBoard = myCopyOfCBoard.updateConstraints(row,col,v)
-			if simpleBackTracking(Sudokuboard,myCopyOfCBoard,variable_assign)==True:
+			if simpleBackTracking(Sudokuboard,
+				myCopyOfCBoard,
+				variable_assign):
 				return True
 			Sudokuboard = Sudokuboard.set_value(row,col,0)
 	return False
@@ -246,7 +248,7 @@ def main():
 	print '\n Completed:'
 
 	t0 = time.time()
-	x = backTrackingWithMRVandMCVandLCV(sb,cb,0)
+	x = simpleBackTracking(sb,cb,0)
 	t1 = time.time()-t0
 	print t1
 '''
@@ -276,6 +278,8 @@ def test():
 				if sb.CurrentGameboard[i][j]!=0:
 					cb = cb.updateConstraints(i,j,sb.CurrentGameboard[i][j])
 
+		print "______________________________________\n"
+		print "Filename: "+ f+"\n"
 		print 'Initial:'
 		for i in range(size):
 			print sb.CurrentGameboard[i]
