@@ -8,30 +8,24 @@ class Constraint():
 		self.isAssigned= isAssigned
 
 class ConstraintBoard():
-	def __init__(self,size,constraints): # ,changes=[]):
+	def __init__(self,size,constraints):
 		self.BoardSize=size
 		self.Constraints = constraints
-		#self.changes =changes
 
 	def updateConstraints(self,row,col,val):
 		self.Constraints[row][col].isAssigned = True
 		self.Constraints[row][col].legalVals.remove(val)
 		subsquare = int(math.sqrt(self.BoardSize))
-		#self.changes=[]
 		#update the row
 		for i in range(self.BoardSize):
 			if i!=col:
-				if len(self.Constraints[row][i].legalVals):
-					if val in self.Constraints[row][i].legalVals:
-						#self.changes.append(((row,i),copy.copy(self.Constraints[row][i].legalVals)))
-						self.Constraints[row][i].legalVals.remove(val)
+				if val in self.Constraints[row][i].legalVals:
+					self.Constraints[row][i].legalVals.remove(val)
 		#update the col
 		for j in range(self.BoardSize):
 			if j!=row:
-				if len(self.Constraints[j][col].legalVals):
-					if val in self.Constraints[j][col].legalVals:
-						#self.changes.append(((j,col),copy.copy(self.Constraints[j][col].legalVals)))
-						self.Constraints[j][col].legalVals.remove(val)
+				if val in self.Constraints[j][col].legalVals:
+					self.Constraints[j][col].legalVals.remove(val)
 		#update the subsquare
 		squareRow = row // subsquare
 		squareCol = col // subsquare
@@ -40,11 +34,10 @@ class ConstraintBoard():
 				x = squareRow*subsquare+i
 				y = squareCol*subsquare+j
 				if x!=row and y != col:
-					if len(self.Constraints[x][y].legalVals):
-						if val in self.Constraints[x][y].legalVals:
-							#self.changes.append(((x,y),copy.copy(self.Constraints[x][y].legalVals)))
-							self.Constraints[x][y].legalVals.remove(val)
+					if val in self.Constraints[x][y].legalVals:
+						self.Constraints[x][y].legalVals.remove(val)
 		return ConstraintBoard(self.BoardSize,self.Constraints)
+
 ##########
 ##########
 #CSP Related Functions
@@ -52,7 +45,7 @@ def forwardCheck(cb):#return false if no legalValues for a cell else true
 	size = cb.BoardSize
 	for i in range(size):
 		for j in range(size):
-			if cb.Constraints[i][j].isAssigned==False and len(cb.Constraints[i][j].legalVals)==0:
+			if cb.Constraints[i][j].isAssigned==False and not cb.Constraints[i][j].legalVals:
 				return False
 	return True
 
@@ -72,6 +65,7 @@ def minimumRemainingValue(cb):##return the minimum remaining values
 				if minimum>remainingVals:
 					minimum = remainingVals
 	return minimum
+
 #MRV = minimum remaining values
 #MCV = most constraining Variable
 def getEmptySquareMRVAndMCV(cb):
@@ -231,10 +225,10 @@ def simpleBackTracking(Sudokuboard,SudokuConstraintBoard,variable_assign):
 
 def main():
 	#initialize environment
-	file_name= '16by16Test.txt'
+	file_name= '9by9Test.txt'
 	sb = init_board(file_name)
 	size = sb.BoardSize
-	constraints = [[Constraint([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],False) for i in range(size)] for x in range(size)]
+	constraints = [[Constraint([1,2,3,4,5,6,7,8,9],False) for i in range(size)] for x in range(size)]
 	cb = ConstraintBoard(size,constraints)
 	for i in range(size):
 		for j in range(size):
