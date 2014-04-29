@@ -163,7 +163,9 @@ def backTrackingWithMRVandMCVandLCV(Sudokuboard,SudokuConstraintBoard,variable_a
 			myCopyOfCBoard = copy.deepcopy(SudokuConstraintBoard)
 			myCopyOfCBoard = myCopyOfCBoard.updateConstraints(row,col,lcvDict[i])
 			if forwardCheck(myCopyOfCBoard):
-				if backTrackingWithMRVandMCVandLCV(Sudokuboard,myCopyOfCBoard,variable_assign):
+				if backTrackingWithMRVandMCVandLCV(Sudokuboard,
+					myCopyOfCBoard,
+					variable_assign):
 					return True
 			Sudokuboard = Sudokuboard.set_value(row,col,0)
 	return False	
@@ -183,7 +185,9 @@ def backTrackingWithMRVandMCV(Sudokuboard,SudokuConstraintBoard,variable_assign)
 			myCopyOfCBoard = copy.deepcopy(SudokuConstraintBoard)
 			myCopyOfCBoard = myCopyOfCBoard.updateConstraints(row,col,v)
 			if forwardCheck(myCopyOfCBoard):
-				if backTrackingWithMRVandMCV(Sudokuboard,myCopyOfCBoard,variable_assign):
+				if backTrackingWithMRVandMCV(Sudokuboard,
+					myCopyOfCBoard,
+					variable_assign):
 					return True
 			Sudokuboard = Sudokuboard.set_value(row,col,0)
 	return False
@@ -203,7 +207,9 @@ def backTrackingWithFC(Sudokuboard,SudokuConstraintBoard,variable_assign):
 			myCopyOfCBoard = copy.deepcopy(SudokuConstraintBoard)
 			myCopyOfCBoard = myCopyOfCBoard.updateConstraints(row,col,v)
 			if forwardCheck(myCopyOfCBoard):
-				if backTrackingWithFC(Sudokuboard,myCopyOfCBoard,variable_assign):
+				if backTrackingWithFC(Sudokuboard,
+					myCopyOfCBoard,
+					variable_assign):
 					return True
 			Sudokuboard = Sudokuboard.set_value(row,col,0)
 	return False
@@ -252,6 +258,7 @@ def main():
 	t1 = time.time()-t0
 	print t1
 '''
+
 def test():
 	path = os.getcwd()+"/testFiles"
 	files = []
@@ -269,7 +276,8 @@ def test():
 		elif size ==16:
 			constraints = [[Constraint([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],False) for i in range(size)] for x in range(size)] 
 		else:
-			constraints = [[Constraint([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25],False) for i in range(size)] for x in range(size)] 
+			constraints = [[Constraint([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25],False)
+			for i in range(size)] for x in range(size)] 
 
 
 		cb = ConstraintBoard(size,constraints)
