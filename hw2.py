@@ -67,7 +67,7 @@ def minimumRemainingValue(cb):##return the minimum remaining values
 	return minimum
 
 #MRV = minimum remaining values
-#MCV = most constraining Variable
+#MCV = most constraining variable
 def getEmptySquareMRVAndMCV(cb):
 	minimum = minimumRemainingValue(cb)
 	sameMRV = []
@@ -88,11 +88,11 @@ def getEmptySquareMRVAndMCV(cb):
 			col = loc[1]
 			for i in range(size):#row search
 				if i!=col:
-					if cb.Constraints[row][i].isAssigned==False: 
+					if not cb.Constraints[row][i].isAssigned: 
 						mcv +=1
 			for j in range(size):#col search
 				if j!=row:
-					if cb.Constraints[j][col].isAssigned==False:
+					if not cb.Constraints[j][col].isAssigned:
 						mcv+=1
 			squareRow = row // subsquare
 			squareCol = col // subsquare
@@ -101,7 +101,7 @@ def getEmptySquareMRVAndMCV(cb):
 					x = squareRow*subsquare+i
 					y = squareCol*subsquare+j
 					if x!= row and y!=col:
-						if cb.Constraints[x][y].isAssigned==False:
+						if not cb.Constraints[x][y].isAssigned:
 							mcv+=1
 			if mcv>maxMCV:
 				maxMCV=mcv
