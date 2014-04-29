@@ -144,7 +144,7 @@ def constrainScore(row,col,val,cb,size):
 	return score
 
 ############
-##########
+############
 #Different Backtracking functions
 def backTrackingWithMRVandMCVandLCV(Sudokuboard,SudokuConstraintBoard,variable_assign):
 	if iscomplete(Sudokuboard.CurrentGameboard):
@@ -175,7 +175,7 @@ def backTrackingWithMRVandMCV(Sudokuboard,SudokuConstraintBoard,variable_assign)
 		print variable_assign
 		return True
 	else:
-		(row,col) = getEmptySquareMRVAndMCV(SudokuConstraintBoard)### here
+		(row,col) = getEmptySquareMRVAndMCV(SudokuConstraintBoard)
 		legalVals = SudokuConstraintBoard.Constraints[row][col].legalVals
 		for v in legalVals:
 			variable_assign +=1
@@ -202,7 +202,7 @@ def backTrackingWithFC(Sudokuboard,SudokuConstraintBoard,variable_assign):
 			Sudokuboard = Sudokuboard.set_value(row,col,v)
 			myCopyOfCBoard = copy.deepcopy(SudokuConstraintBoard)
 			myCopyOfCBoard = myCopyOfCBoard.updateConstraints(row,col,v)
-			if forwardCheck(myCopyOfCBoard):						###HERE
+			if forwardCheck(myCopyOfCBoard):
 				if backTrackingWithFC(Sudokuboard,myCopyOfCBoard,variable_assign):
 					return True
 			Sudokuboard = Sudokuboard.set_value(row,col,0)
