@@ -276,6 +276,8 @@ def test():
 				if sb.CurrentGameboard[i][j]!=0:
 					cb = cb.updateConstraints(i,j,sb.CurrentGameboard[i][j])
 
+		print "______________________________________\n"
+		print "Filename: "+ f+"\n"
 		print 'Initial:'
 		for i in range(size):
 			print sb.CurrentGameboard[i]
