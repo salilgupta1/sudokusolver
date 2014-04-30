@@ -1,5 +1,5 @@
 from sudoku import *
-import math,random,copy,time,os
+import math,copy,time,os
 
 ####Helper classes
 class Constraint():
